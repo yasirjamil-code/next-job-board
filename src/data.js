@@ -7,7 +7,7 @@ export const navLinks = [
   },
   {
     id: uuidv4(),
-    href: "/",
+    href: "/jobs",
     title: "Jobs",
   },
   {

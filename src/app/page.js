@@ -11,7 +11,9 @@ useEffect(() => {
 }, [])
 
 
-  return <div>
-    {status ==='authenticated' ? session.user.email : 'Not Showing'}
+  return <div className="m-4">
+    Gmail: {status ==='authenticated' ? session.user.email : 'Not Showing'}
+    <br />
+    Role: {session?.user.role}
   </div>;
 }

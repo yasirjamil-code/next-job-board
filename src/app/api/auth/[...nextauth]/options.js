@@ -14,26 +14,34 @@ export const authOptions = {
       credentials: {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
+        name: { label: "name", type: "text" },
         role: { label: "Role", type: "text" }, // Role field for credentials
       },
       async authorize(credentials) {
         await ConnectDb();
 
-        const { email, password, role } = credentials;
+        const { email, password, role, name } = credentials;
 
         let user = await User.findOne({ email });
         if (user) {
           const isValidPassword = bcrypt.compareSync(password, user.password);
           if (!isValidPassword) throw new Error("Invalid credentials");
         } else {
-          if (!["Employer", "Job Seeker"].includes(role)) {
-            throw new Error("Invalid role");
-          }
           const hashedPassword = bcrypt.hashSync(password, 10);
-          user = await User.create({ email, password: hashedPassword, role });
+          user = await User.create({
+            name,
+            email,
+            password: hashedPassword,
+            role,
+          });
         }
 
-        return { id: user._id, email: user.email, role: user.role };
+        return {
+          id: user._id,
+          email: user.email,
+          role: user.role,
+          name: user.name,
+        };
       },
     }),
 
@@ -55,13 +63,13 @@ export const authOptions = {
     jwt: async ({ token, user }) => {
       if (user) {
         token.id = user.id;
-        token.role = user.role || null; // Role may not exist for GitHub/Google
+        token.role = user.role || "Job Seeker"; // Role may not exist for GitHub/Google
       }
       return token;
     },
     session: async ({ session, token }) => {
       session.user.id = token.id;
-      session.user.role = token.role || "N/A";
+      session.user.role = token.role || "Job Seeker";
       return session;
     },
   },

@@ -17,9 +17,9 @@ const Navbar = () => {
 
   return (
     <nav className=" bg-[#0f1d43] text-[#eee] min-h-16 flex items-center justify-evenly">
-      <div className="logo select-none">
-        <Link href={"/"} className="font-bold text-3xl">
-          Job <span className="text-green-500 ">Seeker</span>
+      <div className="logo select-none tracking-tighter ">
+        <Link href={"/"} className="font-bold text-3xl font-mono">
+          Job-<span className="text-green-500 font-mono">Helper</span>
         </Link>
       </div>
       <div className="navlinks flex gap-4">
@@ -46,13 +46,23 @@ const Navbar = () => {
             </Link>
           ) : (
             <div className="flex items-center gap-4">
-              <span>{session?.user?.name}</span>
+              <span>
+                {(session?.user?.name || session?.user?.email)?.substring(
+                  0,
+                  13
+                )}
+              </span>
+
               <button
                 className="px-2 py-1 bg-blue-700 rounded-md"
                 onClick={logOut}
               >
                 Logout
               </button>
+
+              <Link href={"/employer-register"}>
+                {session?.user.role === "Job Seeker" ? "Employer" : ""}
+              </Link>
             </div>
           )}
         </div>

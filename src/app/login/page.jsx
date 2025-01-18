@@ -3,16 +3,17 @@ import { signIn, useSession } from "next-auth/react";
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { redirect} from "next/navigation";
+import { redirect } from "next/navigation";
 
 const LoginPage = () => {
-  const {data:session, status} = useSession()
+  const { data: session, status } = useSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("Employer");
+  const [name, setName] = useState("");
+
   const [isPassword, setIsPassword] = useState(true);
-  if(session){
-    redirect('/')
+  if (session) {
+    redirect("/");
   }
 
   const handleSubmit = async (e) => {
@@ -21,7 +22,7 @@ const LoginPage = () => {
     const result = await signIn("credentials", {
       email,
       password,
-      role,
+      name,
       redirect: false,
     });
 
@@ -31,7 +32,7 @@ const LoginPage = () => {
       alert("Login successful");
       setEmail("");
       setPassword("");
-      setRole("Employer");
+      setName("");
     }
   };
 
@@ -53,6 +54,18 @@ const LoginPage = () => {
             Login
           </h2>
 
+          {/* Name Input */}
+          <div className="mb-4">
+            <label className="block mb-2 text-[#1E3A8A]">Name</label>
+            <input
+              type="text"
+              className="w-full p-2 border rounded"
+              placeholder="Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </div>
           {/* Email Input */}
           <div className="mb-4">
             <label className="block mb-2 text-[#1E3A8A]">Email</label>
@@ -86,20 +99,6 @@ const LoginPage = () => {
             </button>
           </div>
 
-          {/* Role Selection */}
-          <div className="mb-4">
-            <label className="block mb-2 text-[#1E3A8A]">Role</label>
-            <select
-              className="w-full p-2 border rounded"
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-              required
-            >
-              <option value="Employer">Employer</option>
-              <option value="Job Seeker">Job Seeker</option>
-            </select>
-          </div>
-
           {/* Submit Button */}
           <button
             type="submit"
@@ -107,7 +106,6 @@ const LoginPage = () => {
           >
             Login
           </button>
-         
         </form>
         <button
           onClick={() => signIn("google")}
@@ -123,13 +121,13 @@ const LoginPage = () => {
           Continue with GitHub
           <Image src="/github.png" height={22} width={22} alt="github" />
         </button>
-         {/* Register Link */}
-         <p className="text-center mt-4 text-[#1E3A8A]">
-            Don’t have an account?{" "}
-            <Link href="/register" className="underline">
-              Register here
-            </Link>
-          </p>
+        {/* Register Link */}
+        <p className="text-center mt-4 text-[#1E3A8A]">
+          Don’t have an account?{" "}
+          <Link href="/register" className="underline">
+            Register here
+          </Link>
+        </p>
       </div>
     </div>
   );

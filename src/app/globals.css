@@ -5,3 +5,12 @@
 *{
   font-family: poppins;
 }
+
+body{
+  background-color: rgb(3, 4, 15);
+  color: white;
+}
+
+input{
+  color: black;
+}

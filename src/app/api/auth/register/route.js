@@ -1,43 +1,55 @@
 import { ConnectDb } from "@/lib/config/DB";
-import User from "@/lib/models/User";
+import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import User from "@/lib/models/User";
 
 export async function POST(req) {
-  const { email, password, role } = await req.json();
+  try {
+    await ConnectDb();
 
-  await ConnectDb();
+    const { name, email, password } = await req.json();
 
-  // Check if the user already exists
-  const existingUser = await User.findOne({ email });
-  if (existingUser) {
-    return new Response(JSON.stringify({ message: "User already exists" }), {
-      status: 400,
+    // check input fields
+
+    if (!name || !email || !password) {
+      return NextResponse.json({
+        success: false,
+        msg: "Please provide name, email, and password.",
+      });
+    }
+
+    // check user exist or not
+
+    if (await User.findOne({ email })) {
+      return NextResponse.json({
+        success: false,
+        msg: "User already registered.",
+      });
+    }
+
+    // check password length
+
+    if (password.length < 6) {
+      return NextResponse.json({
+        success: false,
+        msg: "Password must contain at least 6 characters.",
+      });
+    }
+
+    // if user not exist
+
+    const hashedPassword = bcrypt.hashSync(password, 10);
+    await User.create({ name, email, password: hashedPassword });
+
+    return NextResponse.json({
+      success: true,
+      msg: "User registered successfully.",
+    });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({
+      success: false,
+      msg: "An error occurred. Please try again later.",
     });
   }
-
-  // if (password.length < 8) {
-  //   return new Response("Password too short", { status: 400 });
-  // }
-
-  // Check strength (regex example for uppercase, lowercase, number, special char)
-
-  // const strongPasswordRegex =
-  //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#]).{8,}$/;
-  // if (!strongPasswordRegex.test(password)) {
-  //   return new Response("Weak password", { status: 400 });
-  // }
-
-  // Hash the password
-
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  // Save the new user
-  const newUser = new User({ email, password: hashedPassword, role });
-
-  await newUser.save();
-
-  return new Response(
-    JSON.stringify({ message: "User registered successfully" }),
-    { status: 201 }
-  );
 }

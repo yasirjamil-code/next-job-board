@@ -10,14 +10,5 @@ export const navLinks = [
     href: "/jobs",
     title: "Jobs",
   },
-  {
-    id: uuidv4(),
-    href: "/about",
-    title: "About",
-  },
-  {
-    id: uuidv4(),
-    href: "/contact-us",
-    title: "Contact Us",
-  },
+
 ];

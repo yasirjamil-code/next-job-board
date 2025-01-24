@@ -1,0 +1,13 @@
+<div className="flex items-center mt-2">
+  <input
+    type="checkbox"
+    id="remote"
+    name="remote"
+    className="h-4 w-4 text-[#22C55E] focus:ring-[#22C55E]"
+  />
+  <label htmlFor="remote" className="ml-2 font-medium"> Work from Home </label>
+</div>
+
+
+<!--  -->
+

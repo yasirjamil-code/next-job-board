@@ -41,31 +41,19 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[#1E3A8A]">
+    <div className="min-h-screen flex flex-col items-center justify-center">
       {/* Form Section */}
 
       {/* Social Login Buttons */}
-      <div className="mt-4 flex flex-col items-center gap-3 bg-white w-full max-w-sm p-4 rounded shadow-lg">
+      <div className="mt-4 flex flex-col items-center gap-3 border border-gray-500  w-full max-w-sm p-4 rounded">
         <form
           onSubmit={handleSubmit}
-          className="bg-white p-6 rounded shadow-lg w-full max-w-sm"
+          className="bg-white p-6 rounded w-full max-w-sm"
         >
           <h2 className="text-2xl font-bold text-center mb-4 text-[#191a1d]">
             Login
           </h2>
 
-          {/* Name Input */}
-          <div className="mb-4">
-            <label className="block mb-2 text-[#1E3A8A]">Name</label>
-            <input
-              type="text"
-              className="w-full p-2 border rounded"
-              placeholder="Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-          </div>
           {/* Email Input */}
           <div className="mb-4">
             <label className="block mb-2 text-[#1E3A8A]">Email</label>
@@ -102,25 +90,26 @@ const LoginPage = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full p-2 bg-[#1E3A8A] text-[#22C55E] rounded font-semibold"
+            className="w-full p-2 bg-gray-200 text-gray-700 hover:bg-gray-300 transition-all rounded"
           >
             Login
           </button>
         </form>
         <button
           onClick={() => signIn("google")}
-          className="mr-2 p-2 gap-7 items-center justify-center shadow-xl flex text-[gray] w-72 rounded"
+          className="mr-2 p-2 gap-7 items-center justify-center flex text-[gray] w-72 rounded"
         >
           Continue with Google
           <Image src="/google.png" height={22} width={22} alt="google" />
         </button>
         <button
           onClick={() => signIn("github")}
-          className="p-2 gap-7 items-center justify-center shadow-xl flex w-72 text-[gray] rounded"
+          className="p-2 gap-7 items-center justify-center flex w-72 text-[gray] rounded"
         >
           Continue with GitHub
           <Image src="/github.png" height={22} width={22} alt="github" />
         </button>
+
         {/* Register Link */}
         <p className="text-center mt-4 text-[#1E3A8A]">
           Don’t have an account?{" "}

@@ -8,43 +8,6 @@ import User from "@/lib/models/User";
 
 export const authOptions = {
   providers: [
-    // Credentials Provider
-    CredentialsProvider({
-      name: "Credentials",
-      credentials: {
-        email: { label: "Email", type: "text" },
-        password: { label: "Password", type: "password" },
-        name: { label: "name", type: "text" },
-        role: { label: "Role", type: "text" }, // Role field for credentials
-      },
-      async authorize(credentials) {
-        await ConnectDb();
-
-        const { email, password, role, name } = credentials;
-
-        let user = await User.findOne({ email });
-        if (user) {
-          const isValidPassword = bcrypt.compareSync(password, user.password);
-          if (!isValidPassword) throw new Error("Invalid credentials");
-        } else {
-          const hashedPassword = bcrypt.hashSync(password, 10);
-          user = await User.create({
-            name,
-            email,
-            password: hashedPassword,
-            role,
-          });
-        }
-
-        return {
-          id: user._id,
-          email: user.email,
-          role: user.role,
-          name: user.name,
-        };
-      },
-    }),
-
     // GitHub Provider
     GitHubProvider({
       clientId: process.env.GITHUB_ID,
@@ -55,6 +18,31 @@ export const authOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_ID,
       clientSecret: process.env.GOOGLE_SECRET,
+    }),
+    // Credentials Provider
+    CredentialsProvider({
+      name: "Credentials",
+      credentials: {
+        email: { label: "Email", type: "text" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        await ConnectDb();
+
+        const { email, password } = credentials;
+
+        let user = await User.findOne({ email });
+        if (user) {
+          const isValidPassword = bcrypt.compareSync(password, user.password);
+          if (!isValidPassword) throw new Error("Invalid credentials");
+        }
+        return {
+          id: user._id,
+          email: user.email,
+          role: user.role,
+          name: user.name,
+        };
+      },
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET,

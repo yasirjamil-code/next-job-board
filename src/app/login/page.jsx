@@ -1,125 +1,92 @@
 "use client";
-import { signIn, useSession } from "next-auth/react";
 import { useState } from "react";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
-import { redirect } from "next/navigation";
 
-const LoginPage = () => {
-  const { data: session, status } = useSession();
+export default function Login() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
+  const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
-  const [isPassword, setIsPassword] = useState(true);
-  if (session) {
-    redirect("/");
-  }
-
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
+    setSubmitting(true);
+    setError("");
 
     const result = await signIn("credentials", {
+      redirect: false,
       email,
       password,
-      name,
-      redirect: false,
     });
 
     if (result?.error) {
-      alert("Login failed: " + result.error);
+      setError(result.error);
     } else {
-      alert("Login successful");
-      setEmail("");
-      setPassword("");
-      setName("");
+      router.push("/");
     }
-  };
-
-  const togglePasswordVisibility = () => {
-    setIsPassword((prev) => !prev);
+    setSubmitting(false);
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center">
-      {/* Form Section */}
-
-      {/* Social Login Buttons */}
-      <div className="mt-4 flex flex-col items-center gap-3 border border-gray-500  w-full max-w-sm p-4 rounded">
-        <form
-          onSubmit={handleSubmit}
-          className="bg-white p-6 rounded w-full max-w-sm"
-        >
-          <h2 className="text-2xl font-bold text-center mb-4 text-[#191a1d]">
-            Login
-          </h2>
-
-          {/* Email Input */}
-          <div className="mb-4">
-            <label className="block mb-2 text-[#1E3A8A]">Email</label>
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="w-full max-w-sm p-8 space-y-2 mt-8 bg-white border-gray-500 border text-black rounded">
+        <h2 className="text-center text-2xl font-bold">Login</h2>
+        {error && <p className="text-red-600 text-center">{error}</p>}
+        <form onSubmit={handleLogin} className="space-y-4">
+          <div>
+            <label className="block text-[#1e3a8a]">Email</label>
             <input
               type="email"
-              className="w-full p-2 border rounded"
-              placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              placeholder="Email"
+              className="w-full px-4 py-2 border rounded"
               required
             />
           </div>
-
-          {/* Password Input */}
-          <div className="mb-4 relative">
-            <label className="block mb-2 text-[#1E3A8A]">Password</label>
+          <div>
+            <label className="block text-[#1e3a8a]">Password</label>
             <input
-              type={isPassword ? "password" : "text"}
-              className="w-full p-2 border rounded"
-              placeholder="Password"
+              type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
+              className="w-full px-4 py-2 border rounded"
               required
             />
-            <button
-              type="button"
-              onClick={togglePasswordVisibility}
-              className="absolute right-3 top-9 text-[#1E3A8A] underline"
-            >
-              {isPassword ? "Show" : "Hide"}
-            </button>
           </div>
-
-          {/* Submit Button */}
           <button
             type="submit"
-            className="w-full p-2 bg-gray-200 text-gray-700 hover:bg-gray-300 transition-all rounded"
+            className="w-full bg-gray-200 text-gray-700 hover:bg-gray-300 transition-all py-2 px-4 rounded"
+            disabled={submitting}
           >
-            Login
+            {submitting ? "Logging in..." : "Login"}
           </button>
         </form>
-        <button
-          onClick={() => signIn("google")}
-          className="mr-2 p-2 gap-7 items-center justify-center flex text-[gray] w-72 rounded"
-        >
-          Continue with Google
-          <Image src="/google.png" height={22} width={22} alt="google" />
-        </button>
-        <button
-          onClick={() => signIn("github")}
-          className="p-2 gap-7 items-center justify-center flex w-72 text-[gray] rounded"
-        >
-          Continue with GitHub
-          <Image src="/github.png" height={22} width={22} alt="github" />
-        </button>
-
-        {/* Register Link */}
-        <p className="text-center mt-4 text-[#1E3A8A]">
+        <div className="space-y-2">
+          <button
+            onClick={() => signIn("google")}
+            className="w-full bg-gray-200 text-gray-700 hover:bg-gray-300 py-2 px-4 rounded"
+          >
+            Continue with Google
+          </button>
+          <button
+            onClick={() => signIn("github")}
+            className="w-full bg-gray-200 text-gray-700 hover:bg-gray-300 py-2 px-4 rounded"
+          >
+            Continue with GitHub
+          </button>
+        </div>
+        <p className="text-center mt-4">
           Don’t have an account?{" "}
-          <Link href="/register" className="underline">
+          <Link href="/register" className="text-blue-500 hover:underline">
             Register here
           </Link>
         </p>
       </div>
     </div>
   );
-};
-
-export default LoginPage;
+}

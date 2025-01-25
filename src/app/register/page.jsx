@@ -6,11 +6,12 @@ import Link from "next/link";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 
+
 export default function Register() {
   const router = useRouter();
   const [isPassword, setIsPassword] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [message, setMessage] = useState(""); // For displaying errors or success
+  const [message, setMessage] = useState("");
   const [data, setData] = useState({
     name: "",
     email: "",
@@ -33,11 +34,9 @@ export default function Register() {
       setSubmitting(true);
       const response = await axios.post("/api/auth/register", data);
 
+      setMessage(response.data.msg);
       if (response.data.success) {
-        setMessage(response.data.msg);
         setTimeout(() => router.push("/login"), 2000); // Navigate after success
-      } else {
-        setMessage(response.data.msg);
       }
     } catch (error) {
       setMessage("Something went wrong. Please try again.");
@@ -61,6 +60,7 @@ export default function Register() {
               type="text"
               placeholder="Name"
               className="w-full px-4 py-2 border rounded"
+              required
             />
           </div>
           <div>
@@ -72,6 +72,7 @@ export default function Register() {
               type="email"
               placeholder="Email"
               className="w-full px-4 py-2 border rounded"
+              required
             />
           </div>
           <div className="mb-4 relative">
@@ -97,6 +98,7 @@ export default function Register() {
           <button
             type="submit"
             className="w-full bg-gray-200 text-gray-700 hover:bg-gray-300 transition-all py-2 px-4 rounded"
+            disabled={submitting}
           >
             {submitting ? "Submitting..." : "Register"}
           </button>

@@ -1,66 +1,77 @@
 import NextAuth from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
-import GitHubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
+import GitHubProvider from "next-auth/providers/github";
+import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-import { ConnectDb } from "@/lib/config/DB";
 import User from "@/lib/models/User";
+import { ConnectDb } from "@/lib/config/DB";
 
 export const authOptions = {
+  session: {
+    strategy: "jwt", // Using JSON Web Tokens for session management
+  },
   providers: [
-    // GitHub Provider
-    GitHubProvider({
-      clientId: process.env.GITHUB_ID,
-      clientSecret: process.env.GITHUB_SECRET,
-    }),
-
-    // Google Provider
+    // Google OAuth Provider
     GoogleProvider({
       clientId: process.env.GOOGLE_ID,
       clientSecret: process.env.GOOGLE_SECRET,
     }),
-    // Credentials Provider
+    // GitHub OAuth Provider
+    GitHubProvider({
+      clientId: process.env.GITHUB_ID,
+      clientSecret: process.env.GITHUB_SECRET,
+    }),
+    // Custom Credentials Provider for Email/Password
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "text" },
-        password: { label: "Password", type: "password" },
+        email: { label: "Email", type: "email", placeholder: "Enter your email" },
+        password: { label: "Password", type: "password", placeholder: "Enter your password" },
       },
       async authorize(credentials) {
         await ConnectDb();
-
         const { email, password } = credentials;
 
-        let user = await User.findOne({ email });
-        if (user) {
-          const isValidPassword = bcrypt.compareSync(password, user.password);
-          if (!isValidPassword) throw new Error("Invalid credentials");
+        // Find user by email
+        const user = await User.findOne({ email });
+        if (!user) {
+          throw new Error("No user found with this email.");
         }
+
+        // Verify password
+        const isPasswordCorrect = bcrypt.compareSync(password, user.password);
+        if (!isPasswordCorrect) {
+          throw new Error("Incorrect password.");
+        }
+
         return {
           id: user._id,
+          name: user.name,
           email: user.email,
           role: user.role,
-          name: user.name,
         };
       },
     }),
   ],
-  secret: process.env.NEXTAUTH_SECRET,
-  session: { strategy: "jwt" },
+  pages: {
+    signIn: "/login", // Custom login page
+    signOut: "/logout",
+  },
   callbacks: {
-    jwt: async ({ token, user }) => {
+    async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.role = user.role || "Job Seeker"; // Role may not exist for GitHub/Google
+        token.role = user.role;
       }
       return token;
     },
-    session: async ({ session, token }) => {
+    async session({ session, token }) {
       session.user.id = token.id;
-      session.user.role = token.role || "Job Seeker";
+      session.user.role = token.role;
       return session;
     },
   },
+  secret: process.env.NEXTAUTH_SECRET,
 };
 
 export default NextAuth(authOptions);

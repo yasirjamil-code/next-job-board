@@ -4,30 +4,20 @@ import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 
 export default function EmployerRegister() {
-  const [phone, setPhone] = useState("");
+  const [data, setData] = useState({
+    name: "",
+    email: "",
+    contact: "",
+    password: "",
+  });
+
   return (
-    <div className="min-h-screen mt-10 mb-2 text-[black] flex items-center justify-center">
+    <div className="max-h-screen mt-8 mb-2 text-[black] flex items-center justify-center">
       <div className="mt-4 w-full max-w-lg border border-gray-500 p-8 rounded-lg shadow-md">
         <h1 className="text-3xl text-black font-bold mb-6 text-center">
           Employer Registration
         </h1>
         <form>
-          {/* name */}
-          <div className="mb-4">
-            <label
-              htmlFor="name"
-              className="block text-[#1E3A8A] mb-2 font-medium"
-            >
-              Name
-            </label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              className="w-full p-2 border border-[gray] rounded-md"
-            />
-          </div>
-
           {/* Email */}
           <div className="mb-4">
             <label
@@ -63,7 +53,7 @@ export default function EmployerRegister() {
                 padding: "0 3rem",
                 color: "black",
                 fontSize: "1rem",
-                outline:'1px'
+                outline: "1px",
               }}
               dropdownStyle={{
                 background: "white",
@@ -75,26 +65,10 @@ export default function EmployerRegister() {
               }}
               containerStyle={{
                 width: "100%",
-                
               }}
             />
           </div>
 
-          {/* Password */}
-          <div className="mb-4">
-            <label
-              htmlFor="password"
-              className="block text-[#1E3A8A] mb-2 font-medium"
-            >
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              className="w-full p-2 border border-[gray] rounded-md "
-            />
-          </div>
           {/* Company */}
           <div className="mb-4">
             <label
@@ -110,38 +84,6 @@ export default function EmployerRegister() {
               className="w-full p-2 border border-[gray] rounded-md bg-[white] "
             />
           </div>
-          {/* Country */}
-          <div className="mb-4">
-            <label
-              htmlFor="country"
-              className="block text-[#1E3A8A] mb-2 font-medium"
-            >
-              Country
-            </label>
-            <input
-              type="text"
-              id="country"
-              name="country"
-              className="w-full p-2 border border-[gray] rounded-md bg-[white] "
-            />
-          </div>
-
-          {/* State or City */}
-          <div className="mb-4">
-            <label
-              htmlFor="state"
-              className="block text-[#1E3A8A] mb-2 font-medium"
-            >
-              State/City
-            </label>
-            <input
-              type="text"
-              id="state"
-              name="state"
-              className="w-full p-2 border  border-[gray]  rounded-md  "
-            />
-          </div>
-
           {/* Submit Button */}
           <div className="text-center">
             <button

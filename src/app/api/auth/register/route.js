@@ -6,11 +6,9 @@ import User from "@/lib/models/User";
 export async function POST(req) {
   try {
     await ConnectDb();
-
     const { name, email, password } = await req.json();
 
-    // check input fields
-
+    // Check input fields
     if (!name || !email || !password) {
       return NextResponse.json({
         success: false,
@@ -18,17 +16,16 @@ export async function POST(req) {
       });
     }
 
-    // check user exist or not
-
-    if (await User.findOne({ email })) {
+    // Check if user exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
       return NextResponse.json({
         success: false,
         msg: "User already registered.",
       });
     }
 
-    // check password length
-
+    // Check password length
     if (password.length < 6) {
       return NextResponse.json({
         success: false,
@@ -36,10 +33,9 @@ export async function POST(req) {
       });
     }
 
-    // if user not exist
-
+    // Hash password and create user
     const hashedPassword = bcrypt.hashSync(password, 10);
-    await User.create({ name, email, password: hashedPassword });
+    await User.create({ name, email, password: hashedPassword, role: "job seeker" });
 
     return NextResponse.json({
       success: true,

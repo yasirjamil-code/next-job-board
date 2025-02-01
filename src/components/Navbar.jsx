@@ -1,15 +1,17 @@
 "use client";
 
+import { ThemeContext } from "@/context/ThemeContxt";
 import { navLinks } from "@/data";
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 const Navbar = () => {
+  const  {theme, toogleTheme}  = useContext(ThemeContext);
   const { data: session, status } = useSession();
   const [openProfile, setOpenProfile] = useState(false);
-  let theme = "dark";
+
 
   const logOut = () => {
     const confirmed = confirm(session?.user?.name + ", want to signout");
@@ -75,7 +77,13 @@ const Navbar = () => {
 
                 {openProfile && (
                   <div className="absolute z-[100] flex flex-col gap-3 pt-2  items-center justify-start bg-gray-100 border border-gray-500 rounded-lg px-3 py-2 w-[200px] h-[300px] right-24 top-5">
-                    <Image src={session?.user?.image || '/icon.png'} width={40} height={40} alt="profile" className="rounded-full"  />
+                    <Image
+                      src={session?.user?.image || "/icon.png"}
+                      width={40}
+                      height={40}
+                      alt="profile"
+                      className="rounded-full"
+                    />
                     <div>
                       <div className="m-auto text-center font-medium">
                         Hi! {session?.user?.name}
@@ -95,12 +103,15 @@ const Navbar = () => {
                     </Link>
 
                     <button
-                      onClick={logOut}
+                      onClick={toogleTheme}
                       className="bg-gray-300 w-full py-1 rounded-lg "
                     >
                       {theme === "dark" ? "Light Mode" : "Dark Mode"}
                     </button>
-                    <button onClick={logOut} className="bg-gray-300 w-full py-1 rounded-lg ">
+                    <button
+                      onClick={logOut}
+                      className="bg-gray-300 w-full py-1 rounded-lg "
+                    >
                       Logout
                     </button>
                   </div>

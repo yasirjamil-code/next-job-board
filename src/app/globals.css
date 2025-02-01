@@ -2,15 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
-*{
+* {
   font-family: poppins;
 }
 
-body{
+body {
   /* background-color: rgb(3, 4, 15); */
   color: black;
 }
 
-input{
+input {
   color: black;
+}
+
+.dark {
+  background: rgb(25, 23, 23);
+  color: white !important;
 }

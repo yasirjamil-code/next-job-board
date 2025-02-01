@@ -32,7 +32,7 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex items-center justify-center">
-      <div className="w-full max-w-sm p-8 space-y-2 mt-8 bg-white border-gray-500 border text-black rounded">
+      <div className="w-full max-w-sm p-8 space-y-2 bg-white border-gray-500 border text-black rounded">
         <h2 className="text-center text-2xl font-bold">Login</h2>
         {error && <p className="text-red-600 text-center">{error}</p>}
         <form onSubmit={handleLogin} className="space-y-4">
